@@ -4,7 +4,7 @@ import org.springframework.stereotype.Repository;
 import ru.practicum.shareit.exception.ConditionsNotRespected;
 import ru.practicum.shareit.exception.DuplicatedDataException;
 import ru.practicum.shareit.exception.NotFoundException;
-import ru.practicum.shareit.item.model.Item;
+import ru.practicum.shareit.item.Item;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -105,6 +105,21 @@ public class ItemRepositoryImpl implements ItemRepository{
                 .toList();
     }
 
+    @Override
+    public List<Item> getItemsBySearchRequest(String text) {
+
+        if (text.isBlank()) {
+            return usersItems.values().stream()
+                    .flatMap(List::stream)
+                    .filter(Item::getIsAvailable)
+                    .toList();
+        }
+        return usersItems.values().stream()
+                .flatMap(List::stream)
+                .filter(Item::getIsAvailable)
+                .filter(it -> it.getName().contains(text) || it.getDescription().contains(text))
+                .toList();
+    }
 
 
 

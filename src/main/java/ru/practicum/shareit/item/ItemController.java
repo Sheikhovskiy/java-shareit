@@ -78,7 +78,11 @@ public class ItemController {
 
     @GetMapping("/search")
     public List<ItemDto> getRecommendedItems(@RequestParam String text) {
-        return null;
+
+        log.info("Получен запрос по поиску предметов {} ", text);
+        List<ItemDto> itemDtoList = itemService.getItemsBySearchRequest(text);
+        log.info("Получен список поиска предметов по запросу: {} - {}", text, itemDtoList);
+        return itemDtoList;
     }
 
 
