@@ -18,7 +18,7 @@ public class Item {
 
     private String description;
 
-    private Boolean isAvailable;
+    private Boolean available;
 
     private long owner;
 

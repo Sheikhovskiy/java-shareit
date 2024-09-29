@@ -2,11 +2,11 @@ package ru.practicum.shareit.item.repository;
 
 import org.springframework.stereotype.Repository;
 import ru.practicum.shareit.exception.ConditionsNotRespected;
-import ru.practicum.shareit.exception.DuplicatedDataException;
 import ru.practicum.shareit.exception.NotFoundException;
 import ru.practicum.shareit.item.Item;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -33,14 +33,14 @@ public class ItemRepositoryImpl implements ItemRepository{
             usersItems.put(userId, new ArrayList<>(List.of(item)));
         }
 
-        Optional<Item> itemFoundOpt = usersItems.get(userId).stream()
-                .filter(it -> it.getName().equals(item.getName()))
-                .filter(it -> it.getDescription().equals(item.getDescription()))
-                .findFirst();
-
-        if (itemFoundOpt.isPresent()) {
-            throw new DuplicatedDataException("Предмет с таким названием и описанием уже найден");
-        }
+//        Optional<Item> itemFoundOpt = usersItems.get(userId).stream()
+//                .filter(it -> it.getName().equals(item.getName()))
+//                .filter(it -> it.getDescription().equals(item.getDescription()))
+//                .findFirst();
+//
+//        if (itemFoundOpt.isPresent()) {
+//            throw new DuplicatedDataException("Предмет с таким названием и описанием уже найден");
+//        }
 
         item.setId(generateItemId());
         usersItems.get(userId).add(item);
@@ -54,7 +54,7 @@ public class ItemRepositoryImpl implements ItemRepository{
         long userId = item.getOwner();
 
         if (!usersItems.containsKey(userId)) {
-            throw new NotFoundException("У пользователя с id: " + item.getOwner() + " нет предметов!");
+            throw new NotFoundException("У Пользователя с id: " + userId + " не найдено предметов!");
         }
 
         Optional<Item> itemFoundOpt = usersItems.get(userId).stream()
@@ -73,7 +73,7 @@ public class ItemRepositoryImpl implements ItemRepository{
 
         itemFound.setName(item.getName());
         itemFound.setDescription(item.getDescription());
-        itemFound.setIsAvailable(item.getIsAvailable());
+        itemFound.setAvailable(item.getAvailable());
         itemFound.setItemRequest(item.getItemRequest());
 
         return itemFound;
@@ -98,7 +98,7 @@ public class ItemRepositoryImpl implements ItemRepository{
     public List<Item> getAllItemsByUserId(long userId) {
 
         if (!usersItems.containsKey(userId)) {
-            throw new NotFoundException("Пользователь с id: " + userId + " не найден!");
+            throw new NotFoundException("У Пользователя с id: " + userId + " не найдено предметов!");
         }
 
         return usersItems.get(userId).stream()
@@ -111,14 +111,26 @@ public class ItemRepositoryImpl implements ItemRepository{
         if (text.isBlank()) {
             return usersItems.values().stream()
                     .flatMap(List::stream)
-                    .filter(Item::getIsAvailable)
+                    .filter(Item::getAvailable)
                     .toList();
         }
         return usersItems.values().stream()
                 .flatMap(List::stream)
-                .filter(Item::getIsAvailable)
+                .filter(Item::getAvailable)
                 .filter(it -> it.getName().contains(text) || it.getDescription().contains(text))
                 .toList();
+    }
+
+    @Override
+    public List<Item> deleteUserById(long userId) {
+
+        if (!usersItems.containsKey(userId)) {
+            return Collections.emptyList();
+        }
+
+        List<Item> userItems = usersItems.get(userId);
+        usersItems.remove(userId);
+        return userItems;
     }
 
 

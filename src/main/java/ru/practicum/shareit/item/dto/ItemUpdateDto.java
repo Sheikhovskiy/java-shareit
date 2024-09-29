@@ -18,7 +18,7 @@ public class ItemUpdateDto {
     private String description;
 
     @NotNull
-    private Boolean isAvailable;
+    private Boolean available;
 
     @Positive
     private long owner;

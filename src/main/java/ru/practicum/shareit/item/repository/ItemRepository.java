@@ -2,6 +2,7 @@ package ru.practicum.shareit.item.repository;
 
 
 import ru.practicum.shareit.item.Item;
+import ru.practicum.shareit.user.User;
 
 import java.util.List;
 
@@ -16,5 +17,7 @@ public interface ItemRepository {
     List<Item> getAllItemsByUserId(long userId);
 
     List<Item> getItemsBySearchRequest(String text);
+
+    List<Item> deleteUserById(long userId);
 
 }

@@ -15,6 +15,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import ru.practicum.shareit.item.dto.ItemCreateDto;
 import ru.practicum.shareit.item.dto.ItemDto;
+import ru.practicum.shareit.item.dto.ItemIdDto;
 import ru.practicum.shareit.item.dto.ItemUpdateDto;
 import ru.practicum.shareit.item.service.ItemService;
 
@@ -38,14 +39,14 @@ public class ItemController {
 
 
     @PostMapping
-    public ItemDto createItem(@RequestHeader("X-Sharer-User-Id") long userId,
-                                  @RequestBody @Valid ItemCreateDto itemCreateDto) {
+    public ItemIdDto createItem(@RequestHeader("X-Sharer-User-Id") long userId,
+                                @RequestBody @Valid ItemCreateDto itemCreateDto) {
 
-        itemCreateDto.setUserId(userId);
+        itemCreateDto.setOwner(userId);
         log.info("Получен предмет на создание " + itemCreateDto);
-        ItemDto itemDto = itemService.createItem(itemCreateDto);
-        log.info("Предмет создан " + itemDto);
-        return itemDto;
+        ItemIdDto itemIdDto = itemService.createItem(itemCreateDto);
+        log.info("Предмет создан " + itemIdDto);
+        return itemIdDto;
     }
 
     @PatchMapping("/{itemId}")

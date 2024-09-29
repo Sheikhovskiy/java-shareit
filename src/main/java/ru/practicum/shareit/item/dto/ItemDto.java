@@ -18,7 +18,7 @@ public class ItemDto {
 
     private String description;
 
-    private Boolean isAvailable;
+    private Boolean available;
 
     private ItemRequest request;
 }

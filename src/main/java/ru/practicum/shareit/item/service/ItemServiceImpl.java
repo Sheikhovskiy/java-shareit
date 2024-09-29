@@ -5,9 +5,11 @@ import org.springframework.stereotype.Service;
 import ru.practicum.shareit.item.ItemMapper;
 import ru.practicum.shareit.item.dto.ItemCreateDto;
 import ru.practicum.shareit.item.dto.ItemDto;
+import ru.practicum.shareit.item.dto.ItemIdDto;
 import ru.practicum.shareit.item.dto.ItemUpdateDto;
 import ru.practicum.shareit.item.Item;
 import ru.practicum.shareit.item.repository.ItemRepository;
+import ru.practicum.shareit.user.repository.UserRepository;
 
 import java.util.List;
 
@@ -19,11 +21,15 @@ public class ItemServiceImpl implements ItemService{
 
     private final ItemRepository itemRepository;
 
-    @Override
-    public ItemDto createItem(ItemCreateDto itemCreateDto) {
-        Item item = itemRepository.createItem(ItemMapper.toItemFromCreatedDto(itemCreateDto));
+    private final UserRepository userRepository;
 
-        return toItemDtoFromItem(item);
+    @Override
+    public ItemIdDto createItem(ItemCreateDto itemCreateDto) {
+
+        userRepository.userDoesExist(itemCreateDto.getOwner());
+
+        Item item = itemRepository.createItem(ItemMapper.toItemFromCreatedDto(itemCreateDto));
+        return ItemMapper.toItemIdDtoFromItem(item);
     }
 
     @Override
