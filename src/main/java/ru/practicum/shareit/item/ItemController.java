@@ -40,7 +40,7 @@ public class ItemController {
 
 
     @PostMapping
-    public ItemIdDto createItem(@RequestHeader(value = "X-Sharer-User-Id", required = false) long userId,
+    public ItemIdDto createItem(@RequestHeader("X-Sharer-User-Id") long userId,
                                 @RequestBody @Valid ItemCreateDto itemCreateDto) {
 
         itemCreateDto.setOwner(userId);
@@ -86,7 +86,7 @@ public class ItemController {
 
 
         log.info("Получен запрос по поиску предметов {}", text);
-        List<ItemDto> itemDtoList = itemService.getItemsBySearchRequest(text);
+        List<ItemDto> itemDtoList = itemService.getItemsBySearchRequest(text, userId);
         log.info("Получен список поиска предметов по запросу: {} - {}", text, itemDtoList);
         return itemDtoList;
     }

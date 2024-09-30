@@ -55,8 +55,8 @@ public class ItemServiceImpl implements ItemService{
     }
 
     @Override
-    public List<ItemDto> getItemsBySearchRequest(String text) {
-        List<Item> foundItems = itemRepository.getItemsBySearchRequest(text);
+    public List<ItemDto> getItemsBySearchRequest(String text, long userId) {
+        List<Item> foundItems = itemRepository.getItemsBySearchRequest(text, userId);
 
         return ItemMapper.toListItemDtoFromListItem(foundItems);
     }

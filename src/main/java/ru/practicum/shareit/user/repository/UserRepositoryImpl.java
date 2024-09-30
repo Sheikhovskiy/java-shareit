@@ -15,7 +15,7 @@ public class UserRepositoryImpl implements UserRepository {
 
     Map<Long, User> users = new HashMap<>();
 
-    private long userIdCounter = 0;
+    private long userIdCounter = 1;
 
     private static final String USER_NOT_FOUND = "Пользователь с идентификатором {} не найден!";
 

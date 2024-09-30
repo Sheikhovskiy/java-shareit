@@ -118,41 +118,19 @@ public class ItemRepositoryImpl implements ItemRepository{
     }
 
     @Override
-    public List<Item> getItemsBySearchRequest(String text) {
+    public List<Item> getItemsBySearchRequest(String text, long userId) {
 
         if (text.isBlank()) {
-            return usersItems.values().stream()
-                    .flatMap(List::stream)
-                    .filter(Item::getAvailable)
-                    .toList();
+            return Collections.emptyList();
         }
 
         List<Item> resultItemList = new ArrayList<>();
 
-        for (List<Item> itemList : usersItems.values()) {
-
-            for (Item item : itemList) {
-
-                if (item.getAvailable()) {
-
-                    if ( item.getName().toLowerCase().contains(text)) {
-                        resultItemList.add(item);
-                    }
-
-                    if ( item.getDescription().toLowerCase().contains(text)) {
-                        resultItemList.add(item);
-                    }
-                }
-            }
-        }
-        return resultItemList;
-
-//        return usersItems.values().stream()
-//                .flatMap(List::stream)
-//                .filter(Item::getAvailable)
-//                .filter(it -> it.getName().equalsIgnoreCase(text) || it.getDescription().equalsIgnoreCase(text))
-//                .distinct() // Удаление дубликатов
-//                .toList();
+        return usersItems.get(userId).stream()
+                .filter(Item::getAvailable)
+                .filter(it -> it.getName().equalsIgnoreCase(text) || it.getDescription().equalsIgnoreCase(text))
+                .distinct() // Удаление дубликатов
+                .toList();
     }
 
     @Override
