@@ -109,8 +109,6 @@ public class ItemRepositoryImpl implements ItemRepository {
             return Collections.emptyList();
         }
 
-        List<Item> resultItemList = new ArrayList<>();
-
         return usersItems.get(userId).stream()
                 .filter(Item::getAvailable)
                 .filter(it -> it.getName().equalsIgnoreCase(text) || it.getDescription().equalsIgnoreCase(text))
