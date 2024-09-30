@@ -27,6 +27,7 @@ public class UserServiceImpl implements UserService {
     public UserIdDto createUser(UserCreateDto userCreateDto) {
         User user = userRepository.createUser(UserMapper.toUserFromUserCreateDto(userCreateDto));
 
+        System.out.println(UserMapper.toUserIdDtoFromUser(user));
         return UserMapper.toUserIdDtoFromUser(user);
     }
 

@@ -11,16 +11,12 @@ public class ItemUpdateDto {
 
     private long id;
 
-    @NotBlank
     private String name;
 
-    @NotNull
     private String description;
 
-    @NotNull
     private Boolean available;
 
-    @Positive
     private long owner;
 
     private ItemRequest request;

@@ -42,6 +42,13 @@ public class ItemMapper {
                 .toList();
     }
 
+    public static List<ItemIdDto> toListItemIdDtoFromListItem(List<Item> itemList) {
+
+        return itemList.stream()
+                .map(ItemMapper::toItemIdDtoFromItem)
+                .toList();
+    }
+
     public static Item toItemFromCreatedDto(ItemCreateDto itemCreateDto) {
 
         Item item = new Item();

@@ -7,10 +7,8 @@ import ru.practicum.shareit.user.User;
 import ru.practicum.shareit.user.dto.UserUpdateDto;
 
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.Map;
 import java.util.Optional;
-import java.util.List;
 
 @Repository
 public class UserRepositoryImpl implements UserRepository {

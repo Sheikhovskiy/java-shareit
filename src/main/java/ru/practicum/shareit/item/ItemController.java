@@ -20,6 +20,7 @@ import ru.practicum.shareit.item.dto.ItemUpdateDto;
 import ru.practicum.shareit.item.service.ItemService;
 
 import java.util.List;
+import java.util.Optional;
 
 /**
  * TODO Sprint add-controllers.
@@ -39,7 +40,7 @@ public class ItemController {
 
 
     @PostMapping
-    public ItemIdDto createItem(@RequestHeader("X-Sharer-User-Id") long userId,
+    public ItemIdDto createItem(@RequestHeader(value = "X-Sharer-User-Id", required = false) long userId,
                                 @RequestBody @Valid ItemCreateDto itemCreateDto) {
 
         itemCreateDto.setOwner(userId);
@@ -50,37 +51,41 @@ public class ItemController {
     }
 
     @PatchMapping("/{itemId}")
-    public ItemDto updateItem(@PathVariable long itemId,
-                                  @RequestBody @Valid ItemUpdateDto itemUpdateDto) {
+    public ItemIdDto updateItem(@PathVariable long itemId,
+                              @RequestHeader("X-Sharer-User-Id") long userId,
+                              @RequestBody @Valid ItemUpdateDto itemUpdateDto) {
+        itemUpdateDto.setOwner(userId);
         itemUpdateDto.setId(itemId);
         log.info("Получен предмет на обновление " + itemUpdateDto);
-        ItemDto itemDto = itemService.updateItem(itemUpdateDto);
-        log.info("Объект обновлён " + itemDto);
-        return itemDto;
+        ItemIdDto itemIdDto = itemService.updateItem(itemUpdateDto);
+        log.info("Объект обновлён " + itemIdDto);
+        return itemIdDto;
     }
 
     @GetMapping("/{itemId}")
-    public ItemDto getItemInfoById(@PathVariable long itemId) {
+    public ItemIdDto getItemInfoById(@PathVariable long itemId) {
 
         log.info("Получен идентификатор предмета {}", itemId);
-        ItemDto itemDto = itemService.getItemInfoById(itemId);
-        log.info("Получен предмет с идентификатором {} - {}", itemId, itemDto);
-        return itemDto;
+        ItemIdDto itemIdDto = itemService.getItemInfoById(itemId);
+        log.info("Получен предмет с идентификатором {} - {}", itemId, itemIdDto);
+        return itemIdDto;
     }
 
     @GetMapping
-    public List<ItemDto> getAllItemsByUserId(@RequestHeader("X-Sharer-User-Id") long userId) {
+    public List<ItemIdDto> getAllItemsByUserId(@RequestHeader("X-Sharer-User-Id") long userId) {
 
         log.info("Получен идентификатор пользователя {} для получения всех фильмов пользователя", userId);
-        List<ItemDto> itemDtoList = itemService.getAllItemsByUserId(userId);
-        log.info("Получен список всех предметов пользователя с идентификатором {} - {}", userId, itemDtoList);
-        return itemDtoList;
+        List<ItemIdDto> itemIdDtoList = itemService.getAllItemsByUserId(userId);
+        log.info("Получен список всех предметов пользователя с идентификатором {} - {}", userId, itemIdDtoList);
+        return itemIdDtoList;
     }
 
     @GetMapping("/search")
-    public List<ItemDto> getRecommendedItems(@RequestParam String text) {
+    public List<ItemDto> getRecommendedItems(@RequestHeader(value = "X-Sharer-User-Id", required = false) long userId,
+                                             @RequestParam String text) {
 
-        log.info("Получен запрос по поиску предметов {} ", text);
+
+        log.info("Получен запрос по поиску предметов {}", text);
         List<ItemDto> itemDtoList = itemService.getItemsBySearchRequest(text);
         log.info("Получен список поиска предметов по запросу: {} - {}", text, itemDtoList);
         return itemDtoList;

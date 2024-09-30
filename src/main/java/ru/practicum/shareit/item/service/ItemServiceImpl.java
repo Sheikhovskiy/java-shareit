@@ -29,28 +29,29 @@ public class ItemServiceImpl implements ItemService{
         userRepository.userDoesExist(itemCreateDto.getOwner());
 
         Item item = itemRepository.createItem(ItemMapper.toItemFromCreatedDto(itemCreateDto));
+        System.out.println("ITEM ----->" + ItemMapper.toItemIdDtoFromItem(item));
         return ItemMapper.toItemIdDtoFromItem(item);
     }
 
     @Override
-    public ItemDto updateItem(ItemUpdateDto itemUpdateDto) {
+    public ItemIdDto updateItem(ItemUpdateDto itemUpdateDto) {
         Item item = itemRepository.updateItem(toItemDtoFromItemUpdateDto(itemUpdateDto));
 
-        return ItemMapper.toItemDtoFromItem(item);
+        return ItemMapper.toItemIdDtoFromItem(item);
     }
 
     @Override
-    public ItemDto getItemInfoById(long itemId) {
+    public ItemIdDto getItemInfoById(long itemId) {
         Item item = itemRepository.getItemById(itemId);
 
-        return ItemMapper.toItemDtoFromItem(item);
+        return ItemMapper.toItemIdDtoFromItem(item);
     }
 
     @Override
-    public List<ItemDto> getAllItemsByUserId(long userId) {
+    public List<ItemIdDto> getAllItemsByUserId(long userId) {
         List<Item> userItems = itemRepository.getAllItemsByUserId(userId);
 
-        return ItemMapper.toListItemDtoFromListItem(userItems);
+        return ItemMapper.toListItemIdDtoFromListItem(userItems);
     }
 
     @Override

@@ -11,6 +11,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 @Repository
 public class ItemRepositoryImpl implements ItemRepository{
@@ -52,12 +53,14 @@ public class ItemRepositoryImpl implements ItemRepository{
     public Item updateItem(Item item) {
 
         long userId = item.getOwner();
+        System.out.println(userId);
 
         if (!usersItems.containsKey(userId)) {
             throw new NotFoundException("У Пользователя с id: " + userId + " не найдено предметов!");
         }
 
-        Optional<Item> itemFoundOpt = usersItems.get(userId).stream()
+        Optional<Item> itemFoundOpt = usersItems.values().stream()
+                .flatMap(List::stream)
                 .filter(it -> it.getId() == item.getId())
                 .findFirst();
 
@@ -67,10 +70,11 @@ public class ItemRepositoryImpl implements ItemRepository{
 
         Item itemFound = itemFoundOpt.get();
 
-        if (itemFound.getOwner() != item.getOwner()) {
-            throw new ConditionsNotRespected("Редактировать предмет может только его владелец!");
-        }
+//        if (itemFound.getOwner() != item.getOwner()) {
+//            throw new ConditionsNotRespected("Редактировать предмет может только его владелец!");
+//        }
 
+        itemFound.setId(item.getId());
         itemFound.setName(item.getName());
         itemFound.setDescription(item.getDescription());
         itemFound.setAvailable(item.getAvailable());
@@ -101,8 +105,16 @@ public class ItemRepositoryImpl implements ItemRepository{
             throw new NotFoundException("У Пользователя с id: " + userId + " не найдено предметов!");
         }
 
-        return usersItems.get(userId).stream()
-                .toList();
+        List<Item> userItems = new ArrayList<>();
+
+         usersItems.get(userId)
+                .forEach( it -> {
+                    if (!userItems.contains(it)) {
+                        userItems.add(it);
+                    }
+                });
+
+        return userItems;
     }
 
     @Override
@@ -114,11 +126,33 @@ public class ItemRepositoryImpl implements ItemRepository{
                     .filter(Item::getAvailable)
                     .toList();
         }
-        return usersItems.values().stream()
-                .flatMap(List::stream)
-                .filter(Item::getAvailable)
-                .filter(it -> it.getName().contains(text) || it.getDescription().contains(text))
-                .toList();
+
+        List<Item> resultItemList = new ArrayList<>();
+
+        for (List<Item> itemList : usersItems.values()) {
+
+            for (Item item : itemList) {
+
+                if (item.getAvailable()) {
+
+                    if ( item.getName().toLowerCase().contains(text)) {
+                        resultItemList.add(item);
+                    }
+
+                    if ( item.getDescription().toLowerCase().contains(text)) {
+                        resultItemList.add(item);
+                    }
+                }
+            }
+        }
+        return resultItemList;
+
+//        return usersItems.values().stream()
+//                .flatMap(List::stream)
+//                .filter(Item::getAvailable)
+//                .filter(it -> it.getName().equalsIgnoreCase(text) || it.getDescription().equalsIgnoreCase(text))
+//                .distinct() // Удаление дубликатов
+//                .toList();
     }
 
     @Override
