@@ -12,7 +12,7 @@ import java.util.Map;
 import java.util.Optional;
 
 @Repository
-public class ItemRepositoryImpl implements ItemRepository{
+public class ItemRepositoryImpl implements ItemRepository {
 
     Map<Long, List<Item>> usersItems = new HashMap<>();
 
@@ -93,7 +93,7 @@ public class ItemRepositoryImpl implements ItemRepository{
         List<Item> userItems = new ArrayList<>();
 
          usersItems.get(userId)
-                .forEach( it -> {
+                .forEach(it -> {
                     if (!userItems.contains(it)) {
                         userItems.add(it);
                     }

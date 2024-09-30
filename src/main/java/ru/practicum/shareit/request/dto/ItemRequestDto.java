@@ -1,7 +1,6 @@
 package ru.practicum.shareit.request.dto;
 
 import lombok.Data;
-import lombok.EqualsAndHashCode;
 
 import java.time.LocalDateTime;
 

@@ -24,9 +24,9 @@ public class Booking {
 
     private long booker;
 
-    private BOOKING_STATUS status;
+    private BookingStatus status;
 
-    enum BOOKING_STATUS {
+    enum BookingStatus {
         APPROVED,
         WAITING,
         REJECTED,

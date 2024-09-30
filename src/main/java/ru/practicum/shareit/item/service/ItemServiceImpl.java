@@ -17,7 +17,7 @@ import static ru.practicum.shareit.item.ItemMapper.*;
 
 @Service
 @RequiredArgsConstructor
-public class ItemServiceImpl implements ItemService{
+public class ItemServiceImpl implements ItemService {
 
     private final ItemRepository itemRepository;
 

@@ -18,8 +18,6 @@ import ru.practicum.shareit.user.dto.UserInfoDto;
 import ru.practicum.shareit.user.dto.UserUpdateDto;
 import ru.practicum.shareit.user.service.UserService;
 
-import java.util.List;
-
 /**
  * TODO Sprint add-controllers.
  */
