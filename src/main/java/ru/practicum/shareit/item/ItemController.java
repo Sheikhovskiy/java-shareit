@@ -20,12 +20,8 @@ import ru.practicum.shareit.item.dto.ItemUpdateDto;
 import ru.practicum.shareit.item.service.ItemService;
 
 import java.util.List;
-import java.util.Optional;
 
 /**
- * TODO Sprint add-controllers.
- *
- *
  *  PUT - обновление объекта целиком, PATCH - обновление поля объекта, можно и методом PUT обновить одно поле,
  *  однако метод PUT будет проходить все поля объекта и искать необходимое, в отличии от PATCH, который не обходит объект целиком
  */

@@ -1,7 +1,6 @@
 package ru.practicum.shareit.item.repository;
 
 import org.springframework.stereotype.Repository;
-import ru.practicum.shareit.exception.ConditionsNotRespected;
 import ru.practicum.shareit.exception.NotFoundException;
 import ru.practicum.shareit.item.Item;
 
@@ -11,7 +10,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
-import java.util.stream.Collectors;
 
 @Repository
 public class ItemRepositoryImpl implements ItemRepository{
@@ -33,15 +31,6 @@ public class ItemRepositoryImpl implements ItemRepository{
             // С использованием List.of(item) - список будет немодифицируемым: НЕЛЬЗЯ удалить/добавить объект
             usersItems.put(userId, new ArrayList<>(List.of(item)));
         }
-
-//        Optional<Item> itemFoundOpt = usersItems.get(userId).stream()
-//                .filter(it -> it.getName().equals(item.getName()))
-//                .filter(it -> it.getDescription().equals(item.getDescription()))
-//                .findFirst();
-//
-//        if (itemFoundOpt.isPresent()) {
-//            throw new DuplicatedDataException("Предмет с таким названием и описанием уже найден");
-//        }
 
         item.setId(generateItemId());
         usersItems.get(userId).add(item);
@@ -69,10 +58,6 @@ public class ItemRepositoryImpl implements ItemRepository{
         }
 
         Item itemFound = itemFoundOpt.get();
-
-//        if (itemFound.getOwner() != item.getOwner()) {
-//            throw new ConditionsNotRespected("Редактировать предмет может только его владелец!");
-//        }
 
         itemFound.setId(item.getId());
         itemFound.setName(item.getName());
