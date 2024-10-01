@@ -12,15 +12,10 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
-import ru.practicum.shareit.user.dto.UserCreateDto;
-import ru.practicum.shareit.user.dto.UserIdDto;
-import ru.practicum.shareit.user.dto.UserInfoDto;
-import ru.practicum.shareit.user.dto.UserUpdateDto;
+import ru.practicum.shareit.user.dto.*;
 import ru.practicum.shareit.user.service.UserService;
 
-/**
- * TODO Sprint add-controllers.
- */
+
 @RestController
 @RequestMapping("/users")
 @RequiredArgsConstructor
@@ -31,40 +26,41 @@ public class UserController {
     private final UserService userService;
 
     @PostMapping
-    public UserIdDto createUser(@RequestBody @Valid UserCreateDto userCreateDto) {
+    public UserDto createUser(@RequestBody @Valid UserCreateDto userCreateDto) {
+
         log.info("Получен запрос на создание пользователя {}.", userCreateDto);
-        UserIdDto userIdDto = userService.createUser(userCreateDto);
-        log.info("Пользователь {} успешно создан!", userIdDto);
-        return userIdDto;
+        User user = userService.createUser(UserMapper.toUserFromUserCreateDto(userCreateDto));
+        log.info("Пользователь {} успешно создан!", user);
+        return UserMapper.toUserDtoFromUser(user);
     }
 
     @GetMapping("/{userId}")
-    public UserIdDto getUserById(@PathVariable long userId) {
+    public UserDto getUserById(@PathVariable long userId) {
+
         log.info("Получен запрос на поиск пользователя по идентификатору {}.", userId);
-        UserIdDto userIdDto = userService.getUserById(userId);
+        User user = userService.getUserById(userId);
         log.info("Получен пользователь с идентификатором {}", userId);
-        return userIdDto;
+        return UserMapper.toUserDtoFromUser(user);
     }
 
     @PatchMapping("/{userId}")
-    public UserIdDto updateUserById(@PathVariable long userId,
+    public UserDto updateUserById(@PathVariable long userId,
                                     @RequestBody @Valid UserUpdateDto userUpdateDto) {
+
         userUpdateDto.setId(userId);
         log.info("Получен запрос на обновление пользователя по идентификатору {}", userId);
-        UserIdDto userIdDto = userService.updateUserById(userUpdateDto);
-        log.info("Пользователь с идентификатором {} успешно обновлён", userIdDto.getId());
-        return userIdDto;
+        User user = userService.updateUserById(UserMapper.toUserFromUserUpdateDto(userUpdateDto));
+        log.info("Пользователь с идентификатором {} успешно обновлён", user.getId());
+        return UserMapper.toUserDtoFromUser(user);
     }
-
-
 
     @DeleteMapping("/{userId}")
     public UserInfoDto deleteUserById(@PathVariable long userId) {
 
         log.info("Получен запрос на удаление пользователя по идентификатору {}", userId);
-        UserInfoDto userInfoDto = userService.deleteUserById(userId);
-        log.info("Пользователь с идентификатором {} - {}", userId, userInfoDto);
-        return userInfoDto;
+        User user = userService.deleteUserById(userId);
+        log.info("Пользователь с идентификатором {} - {}", userId, user);
+        return UserMapper.toUserInfoDtoFromUser(user);
     }
 
 

@@ -11,10 +11,16 @@ import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 
+
+//   С использованием List.of(item) - список будет немодифицируемым: НЕЛЬЗЯ удалить/добавить объект
+//   usersItems.put(userId, new ArrayList<>(List.of(item)));
+
 @Repository
 public class ItemRepositoryImpl implements ItemRepository {
 
-    Map<Long, List<Item>> usersItems = new HashMap<>();
+    private Map<Long, List<Item>> usersItems = new HashMap<>();
+
+    private Map<Long, Item> items = new HashMap<>();
 
     private long itemIdCounter = 1;
 
@@ -26,14 +32,11 @@ public class ItemRepositoryImpl implements ItemRepository {
 
         long userId = item.getOwner();
 
-        if (!usersItems.containsKey(userId)) {
-            item.setId(generateItemId());
-            // С использованием List.of(item) - список будет немодифицируемым: НЕЛЬЗЯ удалить/добавить объект
-            usersItems.put(userId, new ArrayList<>(List.of(item)));
-        }
+        final List<Item> itemsList = usersItems.computeIfAbsent(item.getOwner(), k -> new ArrayList<>());
 
         item.setId(generateItemId());
         usersItems.get(userId).add(item);
+        items.put(item.getId(), item);
 
         return item;
     }
@@ -42,44 +45,36 @@ public class ItemRepositoryImpl implements ItemRepository {
     public Item updateItem(Item item) {
 
         long userId = item.getOwner();
-        System.out.println(userId);
 
         if (!usersItems.containsKey(userId)) {
             throw new NotFoundException("У Пользователя с id: " + userId + " не найдено предметов!");
         }
 
-        Optional<Item> itemFoundOpt = usersItems.values().stream()
-                .flatMap(List::stream)
-                .filter(it -> it.getId() == item.getId())
-                .findFirst();
+        Optional<Item> itemSavedOpt = Optional.ofNullable(items.get(item.getId()));
 
-        if (itemFoundOpt.isEmpty()) {
+        if (itemSavedOpt.isEmpty()) {
             throw new NotFoundException(String.format(ITEM_NOT_FOUND, item.getId()));
         }
 
-        Item itemFound = itemFoundOpt.get();
+        Item itemSaved = itemSavedOpt.get();
+        itemSaved.setId(item.getId());
+        itemSaved.setName(item.getName());
+        itemSaved.setDescription(item.getDescription());
+        itemSaved.setAvailable(item.getAvailable());
+        itemSaved.setItemRequest(item.getItemRequest());
 
-        itemFound.setId(item.getId());
-        itemFound.setName(item.getName());
-        itemFound.setDescription(item.getDescription());
-        itemFound.setAvailable(item.getAvailable());
-        itemFound.setItemRequest(item.getItemRequest());
-
-        return itemFound;
+        return itemSaved;
     }
-
 
     @Override
     public Item getItemById(long itemId) {
 
-        Optional<Item> itemFoundOpt = usersItems.values().stream()
-                .flatMap(List::stream) // Из списка в поток объектов Item
-                .filter(it -> it.getId() == itemId)
-                .findFirst();
+        Optional<Item> itemFoundOpt = Optional.ofNullable(items.get(itemId));
 
         if (itemFoundOpt.isEmpty()) {
             throw new NotFoundException(String.format(ITEM_NOT_FOUND, itemId));
         }
+
         return itemFoundOpt.get();
     }
 
@@ -87,7 +82,7 @@ public class ItemRepositoryImpl implements ItemRepository {
     public List<Item> getAllItemsByUserId(long userId) {
 
         if (!usersItems.containsKey(userId)) {
-            throw new NotFoundException("У Пользователя с id: " + userId + " не найдено предметов!");
+            return Collections.emptyList();
         }
 
         List<Item> userItems = new ArrayList<>();
@@ -105,10 +100,6 @@ public class ItemRepositoryImpl implements ItemRepository {
     @Override
     public List<Item> getItemsBySearchRequest(String text, long userId) {
 
-        if (text.isBlank()) {
-            return Collections.emptyList();
-        }
-
         return usersItems.get(userId).stream()
                 .filter(Item::getAvailable)
                 .filter(it -> it.getName().equalsIgnoreCase(text) || it.getDescription().equalsIgnoreCase(text))
@@ -117,7 +108,7 @@ public class ItemRepositoryImpl implements ItemRepository {
     }
 
     @Override
-    public List<Item> deleteUserById(long userId) {
+    public List<Item> deleteByUserId(long userId) {
 
         if (!usersItems.containsKey(userId)) {
             return Collections.emptyList();
@@ -127,8 +118,6 @@ public class ItemRepositoryImpl implements ItemRepository {
         usersItems.remove(userId);
         return userItems;
     }
-
-
 
 
     private long generateItemId() {

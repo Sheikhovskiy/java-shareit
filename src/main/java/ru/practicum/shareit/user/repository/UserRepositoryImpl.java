@@ -4,7 +4,6 @@ import org.springframework.stereotype.Repository;
 import ru.practicum.shareit.exception.DuplicatedDataException;
 import ru.practicum.shareit.exception.NotFoundException;
 import ru.practicum.shareit.user.User;
-import ru.practicum.shareit.user.dto.UserUpdateDto;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -13,7 +12,7 @@ import java.util.Optional;
 @Repository
 public class UserRepositoryImpl implements UserRepository {
 
-    Map<Long, User> users = new HashMap<>();
+    private Map<Long, User> users = new HashMap<>();
 
     private long userIdCounter = 1;
 
@@ -44,25 +43,30 @@ public class UserRepositoryImpl implements UserRepository {
     }
 
     @Override
-    public User updateUserById(UserUpdateDto userUpdateDto) {
+    public User updateUserById(User user) {
 
-        if (!users.containsKey(userUpdateDto.getId())) {
-            throw new NotFoundException("Пользователь с почтой " +  userUpdateDto.getId() + " не найден!");
+        if (!users.containsKey(user.getId())) {
+            throw new NotFoundException("Пользователь с почтой " +  user.getId() + " не найден!");
         }
 
         Optional<User> userEmailOpt = users.values().stream()
-                        .filter(us -> us.getEmail() != null && us.getEmail().equals(userUpdateDto.getEmail()))
-                        .findFirst();
+                .filter(us -> us.getEmail() != null && us.getEmail().equals(user.getEmail()))
+                .findFirst();
 
         if (userEmailOpt.isPresent()) {
             throw new DuplicatedDataException("Такая почта уже привязана к одному из аккаунтов пользователей!");
         }
 
-        User user = new User();
+        User savedUser = users.get(user.getId());
 
-        user.setId(userUpdateDto.getId());
-        user.setName(userUpdateDto.getName());
-        user.setEmail(userUpdateDto.getEmail());
+        if (user.getName() != null) {
+            savedUser.setName(user.getName());
+        }
+
+        if (user.getEmail() != null) {
+            savedUser.setEmail(user.getEmail());
+        }
+
         return user;
     }
 

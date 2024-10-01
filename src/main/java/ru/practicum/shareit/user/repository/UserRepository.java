@@ -1,7 +1,6 @@
 package ru.practicum.shareit.user.repository;
 
 import ru.practicum.shareit.user.User;
-import ru.practicum.shareit.user.dto.UserUpdateDto;
 
 
 public interface UserRepository {
@@ -10,7 +9,7 @@ public interface UserRepository {
 
     User getUserById(long userId);
 
-    User updateUserById(UserUpdateDto userUpdateDto);
+    User updateUserById(User user);
 
     User deleteUserById(long userId);
 

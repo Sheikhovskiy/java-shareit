@@ -2,18 +2,12 @@ package ru.practicum.shareit.item.service;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
-import ru.practicum.shareit.item.ItemMapper;
-import ru.practicum.shareit.item.dto.ItemCreateDto;
-import ru.practicum.shareit.item.dto.ItemDto;
-import ru.practicum.shareit.item.dto.ItemIdDto;
-import ru.practicum.shareit.item.dto.ItemUpdateDto;
 import ru.practicum.shareit.item.Item;
 import ru.practicum.shareit.item.repository.ItemRepository;
 import ru.practicum.shareit.user.repository.UserRepository;
 
+import java.util.Collections;
 import java.util.List;
-
-import static ru.practicum.shareit.item.ItemMapper.*;
 
 @Service
 @RequiredArgsConstructor
@@ -24,42 +18,37 @@ public class ItemServiceImpl implements ItemService {
     private final UserRepository userRepository;
 
     @Override
-    public ItemIdDto createItem(ItemCreateDto itemCreateDto) {
+    public Item createItem(Item item) {
 
-        userRepository.userDoesExist(itemCreateDto.getOwner());
+        userRepository.userDoesExist(item.getOwner());
 
-        Item item = itemRepository.createItem(ItemMapper.toItemFromCreatedDto(itemCreateDto));
-        System.out.println("ITEM ----->" + ItemMapper.toItemIdDtoFromItem(item));
-        return ItemMapper.toItemIdDtoFromItem(item);
+        return itemRepository.createItem(item);
     }
 
     @Override
-    public ItemIdDto updateItem(ItemUpdateDto itemUpdateDto) {
-        Item item = itemRepository.updateItem(toItemDtoFromItemUpdateDto(itemUpdateDto));
-
-        return ItemMapper.toItemIdDtoFromItem(item);
+    public Item updateItem(Item item) {
+        return itemRepository.updateItem(item);
     }
 
     @Override
-    public ItemIdDto getItemInfoById(long itemId) {
-        Item item = itemRepository.getItemById(itemId);
-
-        return ItemMapper.toItemIdDtoFromItem(item);
+    public Item getItemInfoById(long itemId) {
+        return itemRepository.getItemById(itemId);
     }
 
     @Override
-    public List<ItemIdDto> getAllItemsByUserId(long userId) {
-        List<Item> userItems = itemRepository.getAllItemsByUserId(userId);
-
-        return ItemMapper.toListItemIdDtoFromListItem(userItems);
+    public List<Item> getAllItemsByUserId(long userId) {
+        return itemRepository.getAllItemsByUserId(userId);
     }
 
     @Override
-    public List<ItemDto> getItemsBySearchRequest(String text, long userId) {
-        List<Item> foundItems = itemRepository.getItemsBySearchRequest(text, userId);
+    public List<Item> getItemsBySearchRequest(String text, long userId) {
+        if (text.isBlank()) {
+            return Collections.emptyList();
+        }
 
-        return ItemMapper.toListItemDtoFromListItem(foundItems);
+        return itemRepository.getItemsBySearchRequest(text, userId);
     }
+
 
 
 }

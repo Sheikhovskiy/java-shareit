@@ -13,11 +13,6 @@ import ru.practicum.shareit.exception.NotFoundException;
 @RestControllerAdvice
 public class ErrorHandler {
 
-    private ErrorResponse generalHandle(String error) {
-        log.warn(error);
-        return new ErrorResponse(error);
-    }
-
     @ExceptionHandler
     @ResponseStatus(HttpStatus.NOT_FOUND)
     public ErrorResponse handle(final NotFoundException e) {
@@ -35,6 +30,11 @@ public class ErrorHandler {
     public ErrorResponse handle(final Throwable e) {
         log.warn("Error", e);
         return new ErrorResponse(e.getMessage());
+    }
+
+    private ErrorResponse generalHandle(String error) {
+        log.warn(error);
+        return new ErrorResponse(error);
     }
 
 

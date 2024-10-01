@@ -15,7 +15,6 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import ru.practicum.shareit.item.dto.ItemCreateDto;
 import ru.practicum.shareit.item.dto.ItemDto;
-import ru.practicum.shareit.item.dto.ItemIdDto;
 import ru.practicum.shareit.item.dto.ItemUpdateDto;
 import ru.practicum.shareit.item.service.ItemService;
 
@@ -34,57 +33,59 @@ public class ItemController {
 
     private final ItemService itemService;
 
+    private static final String HEADER_USER_ID = "X-Sharer-User-Id";
+
 
     @PostMapping
-    public ItemIdDto createItem(@RequestHeader("X-Sharer-User-Id") long userId,
+    public ItemDto createItem(@RequestHeader(HEADER_USER_ID) long userId,
                                 @RequestBody @Valid ItemCreateDto itemCreateDto) {
 
         itemCreateDto.setOwner(userId);
-        log.info("Получен предмет на создание " + itemCreateDto);
-        ItemIdDto itemIdDto = itemService.createItem(itemCreateDto);
-        log.info("Предмет создан " + itemIdDto);
-        return itemIdDto;
+        log.info("Получен предмет на создание {}", itemCreateDto);
+        Item item = itemService.createItem(ItemMapper.toItemFromCreatedDto(itemCreateDto));
+        log.info("Предмет создан {}", item);
+        return ItemMapper.toItemDtoFromItem(item);
     }
 
     @PatchMapping("/{itemId}")
-    public ItemIdDto updateItem(@PathVariable long itemId,
-                              @RequestHeader("X-Sharer-User-Id") long userId,
+    public ItemDto updateItem(@PathVariable long itemId,
+                              @RequestHeader(HEADER_USER_ID) long userId,
                               @RequestBody @Valid ItemUpdateDto itemUpdateDto) {
+
         itemUpdateDto.setOwner(userId);
         itemUpdateDto.setId(itemId);
-        log.info("Получен предмет на обновление " + itemUpdateDto);
-        ItemIdDto itemIdDto = itemService.updateItem(itemUpdateDto);
-        log.info("Объект обновлён " + itemIdDto);
-        return itemIdDto;
+        log.info("Получен предмет на обновление {}", itemUpdateDto);
+        Item item = itemService.updateItem(ItemMapper.toItemDtoFromItemUpdateDto(itemUpdateDto));
+        log.info("Объект обновлён {}", item);
+        return ItemMapper.toItemDtoFromItem(item);
     }
 
     @GetMapping("/{itemId}")
-    public ItemIdDto getItemInfoById(@PathVariable long itemId) {
+    public ItemDto getItemInfoById(@PathVariable long itemId) {
 
         log.info("Получен идентификатор предмета {}", itemId);
-        ItemIdDto itemIdDto = itemService.getItemInfoById(itemId);
-        log.info("Получен предмет с идентификатором {} - {}", itemId, itemIdDto);
-        return itemIdDto;
+        Item item = itemService.getItemInfoById(itemId);
+        log.info("Получен предмет с идентификатором {} - {}", itemId, item);
+        return ItemMapper.toItemDtoFromItem(item);
     }
 
     @GetMapping
-    public List<ItemIdDto> getAllItemsByUserId(@RequestHeader("X-Sharer-User-Id") long userId) {
+    public List<ItemDto> getAllItemsByUserId(@RequestHeader(HEADER_USER_ID) long userId) {
 
         log.info("Получен идентификатор пользователя {} для получения всех фильмов пользователя", userId);
-        List<ItemIdDto> itemIdDtoList = itemService.getAllItemsByUserId(userId);
-        log.info("Получен список всех предметов пользователя с идентификатором {} - {}", userId, itemIdDtoList);
-        return itemIdDtoList;
+        List<Item> itemsList = itemService.getAllItemsByUserId(userId);
+        log.info("Получен список всех предметов пользователя с идентификатором {} - {}", userId, itemsList);
+        return ItemMapper.toListItemDtoFromListItem(itemsList);
     }
 
     @GetMapping("/search")
-    public List<ItemDto> getRecommendedItems(@RequestHeader(value = "X-Sharer-User-Id", required = false) long userId,
+    public List<ItemDto> getRecommendedItems(@RequestHeader(value = HEADER_USER_ID, required = false) long userId,
                                              @RequestParam String text) {
 
-
         log.info("Получен запрос по поиску предметов {}", text);
-        List<ItemDto> itemDtoList = itemService.getItemsBySearchRequest(text, userId);
-        log.info("Получен список поиска предметов по запросу: {} - {}", text, itemDtoList);
-        return itemDtoList;
+        List<Item> itemsList = itemService.getItemsBySearchRequest(text, userId);
+        log.info("Получен список поиска предметов по запросу: {} - {}", text, itemsList);
+        return ItemMapper.toListItemDtoFromListItem(itemsList);
     }
 
 
