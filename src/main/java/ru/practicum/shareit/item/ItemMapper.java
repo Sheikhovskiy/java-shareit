@@ -10,7 +10,7 @@ import java.util.List;
 @UtilityClass
 public class ItemMapper {
 
-    public static ItemDto toItemDtoFromItem(Item item) {
+    public ItemDto toItemDtoFromItem(Item item) {
 
         ItemDto itemDto = new ItemDto();
 
@@ -22,14 +22,14 @@ public class ItemMapper {
         return itemDto;
     }
 
-    public static List<ItemDto> toListItemDtoFromListItem(List<Item> itemList) {
+    public List<ItemDto> toListItemDtoFromListItem(List<Item> itemList) {
 
         return itemList.stream()
                 .map(ItemMapper::toItemDtoFromItem)
                 .toList();
     }
 
-    public static Item toItemFromCreatedDto(ItemCreateDto itemCreateDto) {
+    public Item toItemFromCreatedDto(ItemCreateDto itemCreateDto) {
 
         Item item = new Item();
 
@@ -41,7 +41,7 @@ public class ItemMapper {
         return item;
     }
 
-    public static Item toItemDtoFromItemUpdateDto(ItemUpdateDto itemUpdateDto) {
+    public Item toItemDtoFromItemUpdateDto(ItemUpdateDto itemUpdateDto) {
 
         Item item = new Item();
 

@@ -30,12 +30,10 @@ public class ItemRepositoryImpl implements ItemRepository {
     @Override
     public Item createItem(Item item) {
 
-        long userId = item.getOwner();
-
         final List<Item> itemsList = usersItems.computeIfAbsent(item.getOwner(), k -> new ArrayList<>());
 
         item.setId(generateItemId());
-        usersItems.get(userId).add(item);
+        itemsList.add(item);
         items.put(item.getId(), item);
 
         return item;
@@ -56,10 +54,16 @@ public class ItemRepositoryImpl implements ItemRepository {
             throw new NotFoundException(String.format(ITEM_NOT_FOUND, item.getId()));
         }
 
-        Item itemSaved = itemSavedOpt.get();
-        itemSaved.setId(item.getId());
-        itemSaved.setName(item.getName());
-        itemSaved.setDescription(item.getDescription());
+        Item itemSaved = items.get(item.getId());
+
+        if (item.getName() != null && !item.getName().isBlank()) {
+            itemSaved.setName(item.getName());
+        }
+
+        if (item.getDescription() != null && !item.getDescription().isBlank()) {
+            itemSaved.setDescription(item.getDescription());
+        }
+
         itemSaved.setAvailable(item.getAvailable());
         itemSaved.setItemRequest(item.getItemRequest());
 
@@ -115,8 +119,7 @@ public class ItemRepositoryImpl implements ItemRepository {
         }
 
         List<Item> userItems = usersItems.get(userId);
-        usersItems.remove(userId);
-        return userItems;
+        return usersItems.remove(userId);
     }
 
 

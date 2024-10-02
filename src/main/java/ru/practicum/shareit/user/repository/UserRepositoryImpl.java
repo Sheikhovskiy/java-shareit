@@ -59,11 +59,11 @@ public class UserRepositoryImpl implements UserRepository {
 
         User savedUser = users.get(user.getId());
 
-        if (user.getName() != null) {
+        if (user.getName() != null && !user.getName().isBlank()) {
             savedUser.setName(user.getName());
         }
 
-        if (user.getEmail() != null) {
+        if (user.getEmail() != null && !user.getEmail().isBlank()) {
             savedUser.setEmail(user.getEmail());
         }
 
@@ -77,8 +77,7 @@ public class UserRepositoryImpl implements UserRepository {
             throw new NotFoundException(String.format(USER_NOT_FOUND, userId));
         }
         User user = users.get(userId);
-        users.remove(userId);
-        return user;
+        return users.remove(userId);
     }
 
     @Override

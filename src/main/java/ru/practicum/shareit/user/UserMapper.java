@@ -7,7 +7,7 @@ import ru.practicum.shareit.user.dto.*;
 @UtilityClass
 public class UserMapper {
 
-    public static UserDto toUserDtoFromUser(User user) {
+    public UserDto toUserDtoFromUser(User user) {
 
        UserDto userDto = new UserDto();
 
@@ -18,7 +18,7 @@ public class UserMapper {
         return userDto;
     }
 
-    public static UserInfoDto toUserInfoDtoFromUser(User user) {
+    public UserInfoDto toUserInfoDtoFromUser(User user) {
 
         UserInfoDto userInfoDto = new UserInfoDto();
 
@@ -28,7 +28,7 @@ public class UserMapper {
         return userInfoDto;
     }
 
-    public static User toUserFromUserCreateDto(UserCreateDto userCreateDto) {
+    public User toUserFromUserCreateDto(UserCreateDto userCreateDto) {
         User user = new User();
 
         user.setName(userCreateDto.getName());
@@ -37,7 +37,7 @@ public class UserMapper {
         return user;
     }
 
-    public static User toUserFromUserUpdateDto(UserUpdateDto userUpdateDto) {
+    public User toUserFromUserUpdateDto(UserUpdateDto userUpdateDto) {
         User user = new User();
 
         user.setId(userUpdateDto.getId());

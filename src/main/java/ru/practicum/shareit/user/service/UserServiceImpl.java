@@ -12,8 +12,6 @@ public class UserServiceImpl implements UserService {
 
     private final UserRepository userRepository;
 
-//    private final ItemRepository itemRepository;
-
     @Override
     public User createUser(User user) {
         return userRepository.createUser(user);
@@ -34,7 +32,6 @@ public class UserServiceImpl implements UserService {
     @Override
     public User deleteUserById(long userId) {
         return userRepository.deleteUserById(userId);
-//        List<Item> userItems = itemRepository.deleteUserById(userId);
 
     }
 }
