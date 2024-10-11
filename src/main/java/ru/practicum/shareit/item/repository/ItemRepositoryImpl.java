@@ -64,13 +64,14 @@ public class ItemRepositoryImpl implements ItemRepository {
             itemSaved.setDescription(item.getDescription());
         }
 
-        if (item.getDescription() != null) {
+        if (item.getAvailable() != null) {
             itemSaved.setAvailable(item.getAvailable());
         }
 
         if (item.getItemRequest() != null) {
             itemSaved.setItemRequest(item.getItemRequest());
         }
+
         return itemSaved;
     }
 
