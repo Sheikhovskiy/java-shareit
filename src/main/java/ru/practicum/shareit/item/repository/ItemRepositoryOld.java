@@ -1,22 +1,21 @@
-package ru.practicum.shareit.item.service;
+package ru.practicum.shareit.item.repository;
 
-import ru.practicum.shareit.item.Comment;
 import ru.practicum.shareit.item.Item;
 
 import java.util.List;
 
-public interface ItemService {
+public interface ItemRepositoryOld {
 
     Item createItem(Item item);
 
     Item updateItem(Item item);
 
-    Item getItemInfoById(long itemId);
+    Item getItemById(long itemId);
 
     List<Item> getAllItemsByUserId(long userId);
 
     List<Item> getItemsBySearchRequest(String text, long userId);
 
-    Comment createComment(Comment comment, long itemId, long userId);
+    List<Item> deleteByUserId(long userId);
 
 }
