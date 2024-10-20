@@ -1,43 +1,89 @@
 package ru.practicum.shareit.item.service;
 
+import jakarta.validation.ValidationException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import ru.practicum.shareit.booking.Booking;
+import ru.practicum.shareit.booking.repository.BookingRepository;
+import ru.practicum.shareit.exception.NotFoundException;
+import ru.practicum.shareit.item.Comment;
 import ru.practicum.shareit.item.Item;
+import ru.practicum.shareit.item.repository.CommentRepository;
 import ru.practicum.shareit.item.repository.ItemRepository;
+import ru.practicum.shareit.item.repository.ItemRepositoryOld;
+import ru.practicum.shareit.user.User;
 import ru.practicum.shareit.user.repository.UserRepository;
+import ru.practicum.shareit.user.repository.UserRepositoryOld;
 
+import java.time.LocalDateTime;
 import java.util.Collections;
 import java.util.List;
+import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor
 public class ItemServiceImpl implements ItemService {
 
+    private final ItemRepositoryOld itemRepositoryOld;
+
+    private final UserRepositoryOld userRepositoryOld;
+
     private final ItemRepository itemRepository;
 
     private final UserRepository userRepository;
 
+    private final CommentRepository commentRepository;
+
+    private final BookingRepository bookingRepository;
+
+
+    private static final String NOT_EXISTING_ITEM = "Ошибка при работе с предметами: Предмет с идентификатором {} " +
+            "не существует!";
+
+    private static final String NOT_EXISTING_USER = "Ошибка при работе с предметами: Пользователь с идентификатором {} " +
+            "не существует!";
+
+    private static final String INEXISTENT_BOOKING_FOR_USER = "Ошибка при работе с предметами: У пользователя с идентификатором {}," +
+            "не существует бронирований предметов";
+
+
     @Override
     public Item createItem(Item item) {
 
-        userRepository.userDoesExist(item.getOwner());
+        Optional<User> itemOwnerIdOpt = Optional.ofNullable(item.getOwner());
+        if (itemOwnerIdOpt.isEmpty()) {
+            throw new NotFoundException("У каждого предмета должен быть владелец!");
+        }
 
-        return itemRepository.createItem(item);
+        item.setCommentList(Collections.emptyList());
+
+        return itemRepository.save(item);
     }
 
     @Override
     public Item updateItem(Item item) {
-        return itemRepository.updateItem(item);
+        Optional<User> itemOwnerIdOpt = Optional.ofNullable(item.getOwner());
+        if (itemOwnerIdOpt.isEmpty()) {
+            throw new NotFoundException("У каждого предмета должен быть владелец!");
+        }
+
+        return itemRepository.save(item);
     }
 
     @Override
     public Item getItemInfoById(long itemId) {
-        return itemRepository.getItemById(itemId);
+        Optional<Item> itemOpt = itemRepository.findById(itemId);
+
+        if (itemOpt.isEmpty()) {
+            throw new NotFoundException(String.format("Предмет с идентификатором {} не существует!", itemId));
+        }
+
+        return itemOpt.get();
     }
 
     @Override
     public List<Item> getAllItemsByUserId(long userId) {
-        return itemRepository.getAllItemsByUserId(userId);
+        return itemRepository.findAllByOwnerId(userId);
     }
 
     @Override
@@ -45,10 +91,38 @@ public class ItemServiceImpl implements ItemService {
         if (text.isBlank()) {
             return Collections.emptyList();
         }
-
-        return itemRepository.getItemsBySearchRequest(text, userId);
+        return itemRepository.getItemsBySearchRequest(text);
     }
 
+
+    @Override
+    public Comment createComment(Comment comment, long itemId, long userId) {
+
+        Optional<Item> itemOpt = itemRepository.findById(itemId);
+
+        Optional<User> userOpt = userRepository.findById(userId);
+
+
+        if (itemOpt.isEmpty()) {
+            throw new NotFoundException(String.format(NOT_EXISTING_ITEM, itemId));
+        }
+
+        if (userOpt.isEmpty()) {
+            throw new NotFoundException(String.format(NOT_EXISTING_USER, userId));
+        }
+
+        comment.setItem(itemOpt.get());
+        comment.setAuthor(userOpt.get());
+//        comment.setCreated_at(LocalDateTime.now());
+
+        List<Optional<Booking>> bookingList = bookingRepository.findByBooker_IdAndDone(userId, LocalDateTime.now());
+
+        if (bookingList.isEmpty()) {
+            throw new ValidationException(String.format(INEXISTENT_BOOKING_FOR_USER, userId));
+        }
+
+        return commentRepository.save(comment);
+    }
 
 
 }

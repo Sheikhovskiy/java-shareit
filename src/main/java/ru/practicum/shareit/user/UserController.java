@@ -56,7 +56,8 @@ public class UserController {
     public UserInfoDto deleteUserById(@PathVariable long userId) {
 
         log.info("Получен запрос на удаление пользователя по идентификатору {}", userId);
-        User user = userService.deleteUserById(userId);
+        User user = userService.getUserById(userId);
+        userService.deleteUserById(userId);
         log.info("Пользователь с идентификатором {} - {}", userId, user);
         return UserMapper.toUserInfoDtoFromUser(user);
     }
