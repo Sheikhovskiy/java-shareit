@@ -12,12 +12,18 @@ import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
+import ru.practicum.shareit.item.dto.CommentCreateDto;
+import ru.practicum.shareit.item.dto.ItemCommentInfoDto;
 import ru.practicum.shareit.item.dto.ItemCreateDto;
 import ru.practicum.shareit.item.dto.ItemDto;
 import ru.practicum.shareit.item.dto.ItemUpdateDto;
 import ru.practicum.shareit.item.service.ItemService;
+import ru.practicum.shareit.user.User;
+import ru.practicum.shareit.user.service.UserService;
 
 import java.util.List;
+
+import ru.practicum.shareit.item.dto.CommentInfoDto;
 
 /**
  *  PUT - обновление объекта целиком, PATCH - обновление поля объекта, можно и методом PUT обновить одно поле,
@@ -31,6 +37,8 @@ public class ItemController {
 
     private final ItemService itemService;
 
+    private final UserService userService;
+
     private static final String HEADER_USER_ID = "X-Sharer-User-Id";
 
 
@@ -40,7 +48,8 @@ public class ItemController {
 
         itemCreateDto.setOwner(userId);
         log.info("Получен предмет на создание {}", itemCreateDto);
-        Item item = itemService.createItem(ItemMapper.toItemFromCreatedDto(itemCreateDto));
+        User itemOwner = userService.getUserById(userId);
+        Item item = itemService.createItem(ItemMapper.toItemFromCreatedDto(itemCreateDto, itemOwner));
         log.info("Предмет создан {}", item);
         return ItemMapper.toItemDtoFromItem(item);
     }
@@ -53,18 +62,19 @@ public class ItemController {
         itemUpdateDto.setOwner(userId);
         itemUpdateDto.setId(itemId);
         log.info("Получен предмет на обновление {}", itemUpdateDto);
-        Item item = itemService.updateItem(ItemMapper.toItemDtoFromItemUpdateDto(itemUpdateDto));
+        User itemOwner = userService.getUserById(userId);
+        Item item = itemService.updateItem(ItemMapper.toItemDtoFromItemUpdateDto(itemUpdateDto, itemOwner));
         log.info("Объект обновлён {}", item);
         return ItemMapper.toItemDtoFromItem(item);
     }
 
     @GetMapping("/{itemId}")
-    public ItemDto getItemInfoById(@PathVariable long itemId) {
+    public ItemCommentInfoDto getItemInfoById(@PathVariable long itemId) {
 
         log.info("Получен идентификатор предмета {}", itemId);
         Item item = itemService.getItemInfoById(itemId);
         log.info("Получен предмет с идентификатором {} - {}", itemId, item);
-        return ItemMapper.toItemDtoFromItem(item);
+        return ItemMapper.toItemCommentInfoDtoFromItem(item);
     }
 
     @GetMapping
@@ -84,6 +94,18 @@ public class ItemController {
         List<Item> itemsList = itemService.getItemsBySearchRequest(text, userId);
         log.info("Получен список поиска предметов по запросу: {} - {}", text, itemsList);
         return ItemMapper.toListItemDtoFromListItem(itemsList);
+    }
+
+    @PostMapping("/{itemId}/comment")
+    public CommentInfoDto createComment(@RequestHeader(HEADER_USER_ID) long userId,
+                                        @PathVariable long itemId,
+                                        @RequestBody CommentCreateDto commentCreateDto) {
+
+        log.info("Получен запрос по добавлению комментария к предмету по идентификатору {} " +
+                "от пользователя по идентификатору {}", itemId, userId);
+        Comment comment = itemService.createComment(CommentMapper.toCommentFromCommentCreateDto(commentCreateDto), itemId, userId);
+        log.info("Создан комментарий с идентификатором {} по предмету {} от пользователя {} ", comment.getId(), itemId, userId);
+        return CommentMapper.toCommentInfoDtoFromComment(comment);
     }
 
 
