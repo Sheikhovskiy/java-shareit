@@ -2,6 +2,7 @@ package ru.practicum.shareit.user.service;
 
 import ru.practicum.shareit.user.User;
 
+
 public interface UserService {
 
     User createUser(User user);
@@ -11,4 +12,6 @@ public interface UserService {
     User updateUserById(User user);
 
     User deleteUserById(long userId);
+
+//    List<User> getAllUsers();
 }
