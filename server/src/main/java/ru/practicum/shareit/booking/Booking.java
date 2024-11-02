@@ -21,7 +21,6 @@ import java.time.LocalDateTime;
 })
 public class Booking {
 
-
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "booking_id")
