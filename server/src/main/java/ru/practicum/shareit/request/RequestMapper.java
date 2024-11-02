@@ -28,7 +28,6 @@ public class RequestMapper {
         if (request.getItemList() != null) {
             requestInfoDto.setItems(ItemMapper.toListItemDtoFromListItem(request.getItemList()));
         }
-//        requestInfoDto.setName(request.getItemList().getFirst().getName());
 
         return requestInfoDto;
     }

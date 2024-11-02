@@ -4,6 +4,8 @@ import org.springframework.data.jpa.repository.EntityGraph;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import ru.practicum.shareit.booking.Booking;
+import ru.practicum.shareit.booking.BookingState;
+import ru.practicum.shareit.booking.BookingStatus;
 
 import java.time.LocalDateTime;
 import java.util.List;
@@ -31,7 +33,7 @@ public interface BookingRepository extends JpaRepository<Booking, Long> {
 
     @Query(value = "select bk " +
             "from Booking as bk " +
-            "where bk.booker = ?1 " +
+            "where bk.booker.id = ?1 " +
             "and ((bk.start < ?2) " + "and (bk.end > ?2)) " +
             "ORDER BY bk.start DESC "
     )
@@ -47,25 +49,25 @@ public interface BookingRepository extends JpaRepository<Booking, Long> {
 
     @Query(value = "select bk " +
             "from Booking as bk " +
-            "where bk.booker = ?1 " +
+            "where bk.booker.id = ?1 " +
             "and (bk.start > ?2) " +
             "ORDER BY bk.start DESC "
     )
     List<Optional<Booking>> findByBooker_IdAndFuture(long bookerId, LocalDateTime actualDate);
 
     @EntityGraph("booking.item")
-    List<Optional<Booking>> findByBookerIdAndStatus(long bookerId, String status);
+    List<Optional<Booking>> findByBookerIdAndStatus(long bookerId, BookingStatus status);
 
     @Query(value = "select bk " +
             "from Booking as bk " +
-            "where bk.item.owner = ?1 " +
+            "where bk.item.owner.id = ?1 " +
             "ORDER BY bk.start DESC "
     )
     List<Optional<Booking>> findByItemOwner(long ownerId);
 
     @Query(value = "select bk " +
             "from Booking as bk " +
-            "where bk.item.owner = ?1 " +
+            "where bk.item.owner.id = ?1 " +
             "and ((bk.start < ?2) " + "and (bk.end > ?2)) " +
             "ORDER BY bk.start DESC "
     )
@@ -73,7 +75,7 @@ public interface BookingRepository extends JpaRepository<Booking, Long> {
 
     @Query(value = "select bk " +
             "from Booking as bk " +
-            "where bk.item.owner = ?1 " +
+            "where bk.item.owner.id = ?1 " +
             "and (bk.end < ?2) " +
             "ORDER BY bk.start DESC "
     )
@@ -81,7 +83,7 @@ public interface BookingRepository extends JpaRepository<Booking, Long> {
 
     @Query(value = "select bk " +
             "from Booking as bk " +
-            "where bk.item.owner = ?1 " +
+            "where bk.item.owner.id = ?1 " +
             "and (bk.start > ?2) " +
             "ORDER BY bk.start DESC "
     )
@@ -89,11 +91,11 @@ public interface BookingRepository extends JpaRepository<Booking, Long> {
 
     @Query(value = "select bk " +
             "from Booking as bk " +
-            "where bk.item.owner = ?1" +
-            "and bk.status = ?2" +
+            "where bk.item.owner.id = ?1 " +
+            "and bk.status = ?2 " +
             "ORDER BY bk.start DESC "
     )
-    List<Optional<Booking>> findByOwnerIdAndStatusOrderByStartDesc(long ownerId, String status);
+    List<Optional<Booking>> findByOwnerIdAndStatusOrderByStartDesc(long ownerId, BookingStatus status);
 
 
 }

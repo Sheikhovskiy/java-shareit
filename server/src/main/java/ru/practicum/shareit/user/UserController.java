@@ -31,23 +31,23 @@ public class UserController {
         return UserMapper.toUserDtoFromUser(user);
     }
 
+    @PatchMapping("/{userId}")
+    public UserDto updateUserById(@PathVariable long userId,
+                                  @RequestBody UserUpdateDto userUpdateDto) {
+
+        userUpdateDto.setId(userId);
+        log.info("Получен запрос на обновление пользователя по идентификатору {}", userId);
+        User user = userService.updateUserById(UserMapper.toUserFromUserUpdateDto(userUpdateDto));
+        log.info("Пользователь с идентификатором {} успешно обновлён", user.getId());
+        return UserMapper.toUserDtoFromUser(user);
+    }
+
     @GetMapping("/{id}")
     public UserDto getUserById(@PathVariable long id) {
 
         log.info("Получен запрос на поиск пользователя по идентификатору {}.", id);
         User user = userService.getUserById(id);
         log.info("Получен пользователь с идентификатором {} ===> {}", id, user);
-        return UserMapper.toUserDtoFromUser(user);
-    }
-
-    @PatchMapping("/{userId}")
-    public UserDto updateUserById(@PathVariable long userId,
-                                    @RequestBody UserUpdateDto userUpdateDto) {
-
-        userUpdateDto.setId(userId);
-        log.info("Получен запрос на обновление пользователя по идентификатору {}", userId);
-        User user = userService.updateUserById(UserMapper.toUserFromUserUpdateDto(userUpdateDto));
-        log.info("Пользователь с идентификатором {} успешно обновлён", user.getId());
         return UserMapper.toUserDtoFromUser(user);
     }
 

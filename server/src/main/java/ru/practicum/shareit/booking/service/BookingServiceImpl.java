@@ -1,7 +1,6 @@
 package ru.practicum.shareit.booking.service;
 
 import lombok.RequiredArgsConstructor;
-import org.apache.logging.log4j.util.InternalException;
 import org.springframework.stereotype.Service;
 import ru.practicum.shareit.booking.Booking;
 import ru.practicum.shareit.booking.BookingState;
@@ -95,7 +94,6 @@ public class BookingServiceImpl implements BookingService {
         if (approvment) {
             booking.setStatus(BookingStatus.APPROVED);
         }
-
         return bookingRepository.save(booking);
     }
 
@@ -139,10 +137,10 @@ public class BookingServiceImpl implements BookingService {
                 bookingListOpt = bookingRepository.findByBooker_IdAndFuture(userId, LocalDateTime.now());
                 break;
             case BookingState.WAITING:
-                bookingListOpt = bookingRepository.findByBookerIdAndStatus(userId, "WAITING");
+                bookingListOpt = bookingRepository.findByBookerIdAndStatus(userId, BookingStatus.WAITING);
                 break;
             case BookingState.REJECTED:
-                bookingListOpt = bookingRepository.findByBookerIdAndStatus(userId, "REJECTED");
+                bookingListOpt = bookingRepository.findByBookerIdAndStatus(userId, BookingStatus.REJECTED);
                 break;
             default:
                 throw new NotFoundException(String.format(INEXISTENT_BOOKING_STATE, state));
@@ -180,10 +178,10 @@ public class BookingServiceImpl implements BookingService {
                 bookingListOpt = bookingRepository.findByOwner_IdAndFuture(ownerId, LocalDateTime.now());
                 break;
             case BookingState.WAITING:
-                bookingListOpt = bookingRepository.findByOwnerIdAndStatusOrderByStartDesc(ownerId, "WAITING");
+                bookingListOpt = bookingRepository.findByOwnerIdAndStatusOrderByStartDesc(ownerId, BookingStatus.WAITING);
                 break;
             case BookingState.REJECTED:
-                bookingListOpt = bookingRepository.findByOwnerIdAndStatusOrderByStartDesc(ownerId, "REJECTED");
+                bookingListOpt = bookingRepository.findByOwnerIdAndStatusOrderByStartDesc(ownerId, BookingStatus.REJECTED);
                 break;
             default:
                 throw new NotFoundException(String.format(INEXISTENT_BOOKING_STATE, state));

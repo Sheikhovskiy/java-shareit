@@ -10,7 +10,8 @@ import java.util.List;
 // Исходящее
 
 @Data
-public class ItemCommentInfoDto {
+public class
+ItemCommentInfoDto {
 
     private long id;
 

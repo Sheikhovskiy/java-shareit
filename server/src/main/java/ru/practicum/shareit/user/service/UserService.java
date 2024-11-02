@@ -13,5 +13,7 @@ public interface UserService {
 
     User deleteUserById(long userId);
 
+    boolean existsById(long userId);
+
 //    List<User> getAllUsers();
 }

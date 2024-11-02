@@ -9,14 +9,13 @@ import ru.practicum.shareit.user.User;
 import ru.practicum.shareit.user.repository.UserRepository;
 
 import java.time.LocalDateTime;
-import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
-public class RequestServiceImplementation implements RequestService {
+public class RequestServiceImpl implements RequestService {
 
     private final UserRepository userRepository;
 
@@ -25,9 +24,8 @@ public class RequestServiceImplementation implements RequestService {
     private static final String NOT_EXISTING_USER = "Ошибка создания запросов: Пользователь с идентификатором {} " +
             "не существует!";
 
-    private static final String NOT_EXISTING_REQUEST = "Ошибка создания запросов: Запрос на добавление предмета с идентификатором {} " +
+    private static final String NOT_EXISTING_REQUEST = "Ошибка создания запросов: Запрос на добавление предмета с идентификатором %d " +
             "не существует!";
-
 
 
     public Request createRequest(Request request, long userId) {
@@ -67,11 +65,9 @@ public class RequestServiceImplementation implements RequestService {
     public Request getRequestById(long requestId) {
 
         Optional<Request> requestOpt = requestRepository.findById(requestId);
-        System.out.println("=================================================> " + requestId);
 
         if (requestOpt.isEmpty()) {
-            throw new NotFoundException(String.format("Ошибка создания запросов: Запрос на добавление предмета с идентификатором %d " +
-                    "не существует!", requestId));
+            throw new NotFoundException(String.format(NOT_EXISTING_REQUEST, requestId));
         }
 
         return requestOpt.get();

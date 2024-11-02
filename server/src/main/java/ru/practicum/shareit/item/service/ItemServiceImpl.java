@@ -1,6 +1,5 @@
 package ru.practicum.shareit.item.service;
 
-import io.micrometer.core.instrument.config.validate.ValidationException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import ru.practicum.shareit.booking.repository.BookingRepository;
@@ -10,7 +9,6 @@ import ru.practicum.shareit.item.Comment;
 import ru.practicum.shareit.item.Item;
 import ru.practicum.shareit.item.repository.CommentRepository;
 import ru.practicum.shareit.item.repository.ItemRepository;
-import ru.practicum.shareit.request.Request;
 import ru.practicum.shareit.request.repository.RequestRepository;
 import ru.practicum.shareit.user.User;
 import ru.practicum.shareit.user.repository.UserRepository;
@@ -35,13 +33,13 @@ public class ItemServiceImpl implements ItemService {
     private final RequestRepository requestRepository;
 
 
-    private static final String NOT_EXISTING_ITEM = "Ошибка при работе с предметами: Предмет с идентификатором {} " +
+    private static final String NOT_EXISTING_ITEM = "Ошибка при работе с предметами: Предмет с идентификатором %d " +
             "не существует!";
 
-    private static final String NOT_EXISTING_USER = "Ошибка при работе с предметами: Пользователь с идентификатором {} " +
+    private static final String NOT_EXISTING_USER = "Ошибка при работе с предметами: Пользователь с идентификатором %d " +
             "не существует!";
 
-    private static final String INEXISTENT_BOOKING_FOR_USER = "Ошибка при работе с предметами: У пользователя с идентификатором {}," +
+    private static final String INEXISTENT_BOOKING_FOR_USER = "Ошибка при работе с предметами: У пользователя с идентификатором %d," +
             "не существует бронирований предметов";
 
 
@@ -54,8 +52,6 @@ public class ItemServiceImpl implements ItemService {
         }
 
         item.setCommentList(Collections.emptyList());
-
-//        Optional<Request> requestOpt = requestRepository.findById(item.getRequest())
 
         return itemRepository.save(item);
     }
@@ -75,10 +71,16 @@ public class ItemServiceImpl implements ItemService {
         Optional<Item> itemOpt = itemRepository.findById(itemId);
 
         if (itemOpt.isEmpty()) {
-            throw new NotFoundException(String.format("Предмет с идентификатором {} не существует!", itemId));
+            throw new NotFoundException(String.format(NOT_EXISTING_ITEM, itemId));
         }
 
-        return itemOpt.get();
+        Item item = itemOpt.get();
+
+//        if (item.getCommentList() == null) {
+//            item.setCommentList(new ArrayList<>());
+//        }
+
+        return item;
     }
 
     @Override

@@ -1,6 +1,5 @@
 package ru.practicum.shareit.item;
 
-import jakarta.annotation.Nullable;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -24,10 +23,7 @@ import ru.practicum.shareit.request.service.RequestService;
 import ru.practicum.shareit.user.User;
 import ru.practicum.shareit.user.service.UserService;
 
-import java.lang.reflect.Field;
-import java.util.Arrays;
 import java.util.List;
-import java.util.Optional;
 
 import ru.practicum.shareit.item.dto.CommentInfoDto;
 
@@ -92,7 +88,7 @@ public class ItemController {
     @GetMapping
     public List<ItemDto> getAllItemsByUserId(@RequestHeader(CommonConstants.HEADER_USER_ID) long userId) {
 
-        log.info("Получен идентификатор пользователя {} для получения всех фильмов пользователя", userId);
+        log.info("Получен идентификатор пользователя {} для получения всех предметов пользователя", userId);
         List<Item> itemsList = itemService.getAllItemsByUserId(userId);
         log.info("Получен список всех предметов пользователя с идентификатором {} - {}", userId, itemsList);
         return ItemMapper.toListItemDtoFromListItem(itemsList);

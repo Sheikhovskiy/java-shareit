@@ -54,7 +54,6 @@ class BookingControllerTest {
         bookingTest = new Booking();
         userTest = new User();
         itemTest = new Item();
-        //        User user = new User(userTest, "Test User", "test@example.com");
 
         bookingTest.setBooker(userTest);
         bookingTest.setItem(itemTest);
@@ -134,7 +133,7 @@ class BookingControllerTest {
         mockMvc.perform(get(path)
                         .header(HEADER_USER_ID, userId))
                 .andExpect(status().isOk())
-                .andExpect(content().json("{}")); // Здесь укажите актуальное содержимое JSON
+                .andExpect(content().json("{}"));
 
         Mockito.verify(bookingService, times(1)).getBookingById(userId, bookingId);
     }
