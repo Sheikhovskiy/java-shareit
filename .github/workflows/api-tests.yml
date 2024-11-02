@@ -5,9 +5,4 @@ on:
 
 jobs:
   build:
-    steps:
-      - name: Clear cache
-        run: rm -rf ${{ github.workspace }}/checkstyle.xml
-
-      - name: Run API Tests
-        uses: yandex-praktikum/java-shareit/.github/workflows/api-tests.yml@ci
+    uses: yandex-praktikum/java-shareit/.github/workflows/api-tests.yml@ci
