@@ -38,5 +38,4 @@ build/
 volumes/
 
 checkstyle.xml
-.github/workflows/api-tests.yml
 
