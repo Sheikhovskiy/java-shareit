@@ -1,0 +1,39 @@
+services:
+  db:
+    image: postgres:16.1
+    container_name: postgresShareit
+    ports:
+      - "5438:5432"
+    volumes:
+      - ./volumes/postgres:/var/lib/postgresql/data/
+    environment:
+      - POSTGRES_DB=shareit
+      - POSTGRES_USER=dbuser
+      - POSTGRES_PASSWORD=12333
+    healthcheck:
+      test: pg_isready -q -d $$POSTGRES_DB -U $$POSTGRES_USER
+      timeout: 5s
+      interval: 5s
+      retries: 10
+
+    # ещё один сервис
+  db-init:
+    image: postgres:16.1
+    container_name: db-init
+    # секция для указания зависимостей от других сервисов
+    depends_on:
+      # указываем, что этот сервис зависит от сервиса с именем db
+      db:
+        # указываем, что условием запуска будет момент, когда
+        # сервис db будет в «здоровом» состоянии
+        condition: service_healthy
+    entrypoint:
+      - bash
+      - -c
+      - |
+        set -e
+        psql postgresql://dbuser:12333@db:5432/shareit -v ON_ERROR_STOP=1 <<-EOSQL
+
+        EOSQL
+
+#      docker run -d --name postgresShareit -e POSTGRES_USER=dbuser -e POSTGRES_PASSWORD=12333 -e POSTGRES_DB=shareit postgres:16.1
