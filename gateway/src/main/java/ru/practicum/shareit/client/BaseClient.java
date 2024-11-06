@@ -26,6 +26,7 @@ public class BaseClient {
     protected ResponseEntity<Object> get(String path, long userId) {
         return get(path, userId, null);
     }
+
     protected ResponseEntity<Object> get(String path, Long userId, @Nullable Map<String, Object> parameters) {
         return makeAndSendRequest(HttpMethod.GET, path, userId, parameters, null);
     }
